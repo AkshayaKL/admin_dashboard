@@ -34,9 +34,9 @@ export default function Dashboard() {
   };
   let unique = [];
 
-  const [rows,setRows] = useState([]);
+ 
   const [page, setPage] = useState(0);
-  const [users, setUsers] = useState(rows);
+  const [users, setUsers] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [selectionModel, setSelectionModel] = useState([]);
   const [returnedUsers, setReturnedUsers] = useState(users);
