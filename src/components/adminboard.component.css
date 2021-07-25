@@ -1,0 +1,63 @@
+@media only screen and (min-width: 780px) {
+  body {
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
+}
+#pagination {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+#deleteBulk {
+  flex-shrink: 1;
+}
+
+#pages {
+  display: flex;
+
+  justify-content: center;
+}
+
+#search {
+  background-color: rgb(47, 47, 134);
+  color: wheat;
+
+  flex-direction: horizontal;
+  flex-wrap: wrap;
+  justify-content: end;
+}
+
+#searchField {
+ display: flex;
+  color: wheat;
+  justify-content: center;
+}
+
+
+
+#page:hover {
+  background-color: rgb(47, 47, 134);
+  color:white;
+}
+#usersWrapper {
+  color: red;
+}
+
+#deleteButton {
+  flex-basis: 50%;
+  flex-grow: 1;
+}
+
+#deleteButton:hover {
+  color: red;
+}
+
+#editButton:hover {
+  color: blue;
+}
+#editButton {
+  flex-basis: 50%;
+  flex-grow: 0;
+}
