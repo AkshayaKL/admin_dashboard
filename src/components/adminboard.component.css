@@ -4,6 +4,8 @@
     overflow-x: hidden;
   }
 }
+
+
 #pagination {
   display: flex;
   width: 100%;
