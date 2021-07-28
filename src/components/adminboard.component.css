@@ -30,16 +30,19 @@
 }
 
 #searchField {
- display: flex;
+  display: flex;
   color: wheat;
   justify-content: center;
 }
 
-
+#firstPage{
+  transform: rotate(180deg);
+ 
+}
 
 #page:hover {
   background-color: rgb(47, 47, 134);
-  color:white;
+  color: white;
 }
 #usersWrapper {
   color: red;
