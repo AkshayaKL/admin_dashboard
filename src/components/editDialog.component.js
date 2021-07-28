@@ -51,7 +51,7 @@ open={props.openEdit}
     {
        [...new Set(props.users.map(a => a.role))].map((role)=>{
            
-            return <MenuItem value={role}>{role}</MenuItem>
+            return <MenuItem key={role} value={role}>{role}</MenuItem>
            
        })
     }

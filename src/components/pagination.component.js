@@ -7,7 +7,7 @@ export function Pages(props) {
       color="primary"
       count={Math.ceil(props.users.length / props.totalPages)}
       page={props.page}
-      onChange={(event, value) => props.setPage(value)}
+      onChange={(event, value) => {props.setPage(value); props.setSelectionModel([])}}
     />
   );
 }

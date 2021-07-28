@@ -32,6 +32,8 @@ export default function Dashboard(props) {
     );
 
     setopenEdit(false);
+    
+    
   };
 
   const [page, setPage] = useState(0);
@@ -43,7 +45,6 @@ export default function Dashboard(props) {
 
   useEffect(() => {
     getUserData().then((userdata) => {
-      console.log(userdata.data);
       setUsers(userdata.data);
       setReturnedUsers(userdata.data);
       setPage(1);
@@ -142,6 +143,7 @@ export default function Dashboard(props) {
             Pagination: () => {
               return (
                 <Pages
+                 setSelectionModel={setSelectionModel}
                   users={returnedUsers}
                   totalPages={props.totalPages}
                   setPage={setPage}
@@ -153,7 +155,6 @@ export default function Dashboard(props) {
           disableSelectionOnClick
           onPageChange={(params) => {
             setPage(params.page);
-            console.log(params);
             setSelectionModel([]);
           }}
           isRowSelectable={(params) => {
@@ -165,7 +166,7 @@ export default function Dashboard(props) {
           }}
           onSelectionModelChange={(newSelection) => {
             setSelectionModel(...[newSelection.selectionModel]);
-            console.log(newSelection);
+            
           }}
         />
       </div>
