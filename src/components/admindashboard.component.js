@@ -12,19 +12,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
-}));
-export default function Dashboard() {
-  const classes = useStyles();
+
+export default function Dashboard(props) {
+ 
 
  
   const gridStyle = {
@@ -83,10 +73,16 @@ export default function Dashboard() {
 
   var deleteRows = () => {
     setReturnedUsers(
-      returnedUsers.filter((user) => !selectionModel.includes(user["id"]))
+      [...returnedUsers.filter((user) => !selectionModel.includes(user["id"]))]
     );
-    setUsers(users.filter((user) => !selectionModel.includes(user["id"])));
+    setUsers([...users.filter((user) => !selectionModel.includes(user["id"]))]);
     setSelectionModel([]);
+    
+    if(page >= Math.floor((returnedUsers.length-1)/props.totalPages) &&page>0){
+            
+            setPage(Math.floor((returnedUsers.length-1)/props.totalPages)-1);
+            
+    }
   };
 
   var editRows = (rowToBeEdited) => {
@@ -150,7 +146,7 @@ export default function Dashboard() {
     },
   ];
   return (
-    <div style={gridStyle} className={classes.root}>
+    <div style={gridStyle} >
    
       <Dialog
         onClose={handleClose}
@@ -234,7 +230,7 @@ export default function Dashboard() {
         <DataGrid
           disableColumnFilter
           rowHeight={37}
-          pageSize={10}
+          pageSize={props.totalPages}
           rows={returnedUsers}
           columns={columns}
           checkboxSelection
@@ -247,8 +243,8 @@ export default function Dashboard() {
           }}
           isRowSelectable={(params) => {
             return (
-              returnedUsers.indexOf(params.row) + 1 > page * 10 &&
-              returnedUsers.indexOf(params.row) + 1 <= (page + 1) * 10
+              returnedUsers.indexOf(params.row) + 1 > page * props.totalPages &&
+              returnedUsers.indexOf(params.row) + 1 <= (page + 1) * props.totalPages
             );
           }}
           onSelectionModelChange={(newSelection) => {
@@ -283,21 +279,21 @@ export default function Dashboard() {
         <div id="pages">{
        
           returnedUsers.map((pageno, index)=>{
-          if (pages.indexOf(Math.floor(index / 10) + 1) === -1) {
-            pages.push(Math.floor(index / 10) + 1);
+          if (pages.indexOf(Math.floor(index / props.totalPages) + 1) === -1) {
+            pages.push(Math.floor(index / props.totalPages) + 1);
 
             return (
               <Button
                 
                 onClick={() => {
                   setSelectionModel([]);
-                  setPage(Math.floor(index / 10));
+                  setPage(Math.floor(index / props.totalPages));
                 }}
                 size="small"
                 id="page"
                 
               >
-                {Math.floor(index / 10) + 1}
+                {Math.floor(index / props.totalPages) + 1}
               </Button>
             );
           }

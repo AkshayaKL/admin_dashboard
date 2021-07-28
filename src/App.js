@@ -12,7 +12,7 @@ export function App() {
     
     <div id = "dashboard" style={{'height':'100%'}}>
  
-    <Dashboard style={{'height':'100%', }}/>
+    <Dashboard totalPages={10} style={{'height':'100%', }}/>
     </div>
    
   );
