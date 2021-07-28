@@ -2,53 +2,21 @@ import React, { useEffect, useState } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import { MenuItem, Select, TextField } from "@material-ui/core";
-import { makeStyles } from '@material-ui/core/styles';
+import Searchbar from "./search.component";
+import EditDialog from "./editDialog.component";
+import { Pages } from "./pagination.component";
 import { Button } from "@material-ui/core";
 import "./adminboard.component.css";
 import { getUserData } from "../services/usersFetch";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-
 
 export default function Dashboard(props) {
- 
-
- 
   const gridStyle = {
     display: "flex",
     height: 580,
     flexDirection: "column",
   };
-  let unique = [];
 
- 
-  const [page, setPage] = useState(0);
-  const [users, setUsers] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
-  const [selectionModel, setSelectionModel] = useState([]);
-  const [returnedUsers, setReturnedUsers] = useState(users);
-  const [openEdit, setopenEdit] = useState(false);
-  const [editedRow, setEditedRow] = useState({});
-  let pages = [];
-
-
-  useEffect(()=>{
-    getUserData().then((userdata)=>{
-      console.log(userdata.data);
-      setUsers(userdata.data);
-      setReturnedUsers(userdata.data)
-    });
-  },[])
   var handleClose = () => {
-    console.log(editedRow);
-    console.log([
-      ...returnedUsers.filter((user) => user["id"] !== editedRow["id"]),
-      editedRow,
-    ]);
-
     setReturnedUsers(
       [
         ...returnedUsers.filter((user) => user["id"] !== editedRow["id"]),
@@ -56,13 +24,32 @@ export default function Dashboard(props) {
       ].sort((a, b) => a["id"] - b["id"])
     );
 
-    setUsers( [
-      ...users.filter((user) => user["id"] !== editedRow["id"]),
-      editedRow,
-    ].sort((a, b) => a["id"] - b["id"]));
+    setUsers(
+      [
+        ...users.filter((user) => user["id"] !== editedRow["id"]),
+        editedRow,
+      ].sort((a, b) => a["id"] - b["id"])
+    );
 
     setopenEdit(false);
   };
+
+  const [page, setPage] = useState(0);
+  const [users, setUsers] = useState([]);
+  const [selectionModel, setSelectionModel] = useState([]);
+  const [returnedUsers, setReturnedUsers] = useState(users);
+  const [openEdit, setopenEdit] = useState(false);
+  const [editedRow, setEditedRow] = useState({});
+
+  useEffect(() => {
+    getUserData().then((userdata) => {
+      console.log(userdata.data);
+      setUsers(userdata.data);
+      setReturnedUsers(userdata.data);
+      setPage(1);
+    });
+  }, []);
+
   var deleteRow = (rowToBeDeleted) => {
     console.log(rowToBeDeleted.row);
     setReturnedUsers(
@@ -72,16 +59,17 @@ export default function Dashboard(props) {
   };
 
   var deleteRows = () => {
-    setReturnedUsers(
-      [...returnedUsers.filter((user) => !selectionModel.includes(user["id"]))]
-    );
+    setReturnedUsers([
+      ...returnedUsers.filter((user) => !selectionModel.includes(user["id"])),
+    ]);
     setUsers([...users.filter((user) => !selectionModel.includes(user["id"]))]);
     setSelectionModel([]);
-    
-    if(page >= Math.floor((returnedUsers.length-1)/props.totalPages) &&page>0){
-            
-            setPage(Math.floor((returnedUsers.length-1)/props.totalPages)-1);
-            
+
+    if (
+      page >= Math.floor((returnedUsers.length - 1) / props.totalPages) &&
+      page > 1
+    ) {
+      setPage(Math.floor((returnedUsers.length - 1) / props.totalPages));
     }
   };
 
@@ -90,30 +78,11 @@ export default function Dashboard(props) {
     setopenEdit(true);
   };
 
-  var handleSearch = (e) => {
-    setSearchValue(e.target.value);
-    filterRows(e.target.value);
-  };
-
-  var filterRows = (searchValue) => {
-    setReturnedUsers(
-      users.filter((user) => {
-        console.log(user.name);
-        console.log(searchValue);
-        return (
-          user.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-          user.id.includes(searchValue.toLowerCase()) ||
-          user.role.toLowerCase().includes(searchValue)
-        );
-      })
-    );
-  };
-
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.2, sortable: false },
+    { field: "id", headerName: "ID", flex: 1, sortable: false },
     { field: "name", headerName: "Name", flex: 1, sortable: false },
     { field: "email", headerName: "Email", flex: 1, sortable: false },
-    { field: "role", headerName: "Role", flex: 0.2, sortable: false },
+    { field: "role", headerName: "Role", flex: 1, sortable: false },
 
     {
       field: "actions",
@@ -142,99 +111,45 @@ export default function Dashboard(props) {
         );
       },
       headerName: "Actions",
-      flex: 0.3,
+      flex: 1,
     },
   ];
   return (
-    <div style={gridStyle} >
-   
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby="simple-dialog-title"
-        open={openEdit}
-      >
-        <DialogTitle id="form-dialog-title">{`${editedRow["name"]}'s details`}</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="name"
-            type="name"
-            value={editedRow["name"]}
-            onChange={(e) => {
-              setEditedRow({ ...editedRow, name: e.target.value });
-            }}
-            fullWidth
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="email"
-            label="Email"
-            type="email"
-            value={editedRow["email"]}
-            onChange={(e) => {
-              setEditedRow({ ...editedRow, email: e.target.value });
-            }}
-            fullWidth
-          />
-
-          <Select
-            value={editedRow["role"]}
-            onChange={(e) => {
-              setEditedRow({ ...editedRow, role: e.target.value });
-            }}
-            fullWidth
-          >
-            {returnedUsers.map((user) => {
-              if (unique.indexOf(user["role"]) === -1) {
-                unique.push(user.role);
-                return <MenuItem value={user.role}>{user["role"]}</MenuItem>;
-              }
-            })}
-          </Select>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleClose} color="primary">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <div style={{ flexgrow: 1, flexBasis: "90%"}}>
-        <div id="search">
-          
-          <div id="searchField" ><TextField
-            id="searchField" 
-            
-            autoFocus
-            margin="dense"
-           
-            type="name"
-            
-            placeholder ={"Search for users.."}
-            value={searchValue}
-            onChange={(e) => {
-              handleSearch(e);
-            }}
-          />
-
-       
-          </div>
-         
-        </div>
-
+    <div style={gridStyle}>
+      <EditDialog
+        users={users}
+        handleClose={handleClose}
+        editedRow={editedRow}
+        setEditedRow={setEditedRow}
+        setopenEdit={setopenEdit}
+        openEdit={openEdit}
+      />
+      <Searchbar
+        users={users}
+        setReturnedUsers={setReturnedUsers}
+        setPage={setPage}
+      />
+      <div style={{ flexgrow: 1, flexBasis: "90%" }}>
         <DataGrid
           disableColumnFilter
           rowHeight={37}
           pageSize={props.totalPages}
+          page={page - 1}
           rows={returnedUsers}
           columns={columns}
           checkboxSelection
-          page={page}
+          components={{
+            Pagination: () => {
+              return (
+                <Pages
+                  users={returnedUsers}
+                  totalPages={props.totalPages}
+                  setPage={setPage}
+                  page={page}
+                />
+              );
+            },
+          }}
           disableSelectionOnClick
           onPageChange={(params) => {
             setPage(params.page);
@@ -243,8 +158,9 @@ export default function Dashboard(props) {
           }}
           isRowSelectable={(params) => {
             return (
-              returnedUsers.indexOf(params.row) + 1 > page * props.totalPages &&
-              returnedUsers.indexOf(params.row) + 1 <= (page + 1) * props.totalPages
+              returnedUsers.indexOf(params.row) + 1 >
+                (page - 1) * props.totalPages &&
+              returnedUsers.indexOf(params.row) + 1 <= page * props.totalPages
             );
           }}
           onSelectionModelChange={(newSelection) => {
@@ -252,16 +168,10 @@ export default function Dashboard(props) {
             console.log(newSelection);
           }}
         />
-     
-
-
-
-
       </div>
-      
-     <div id="pagination" >
 
-     <Button id="deleteBulk"
+      <Button
+        id="deleteBulk"
         style={{
           visibility: selectionModel.length > 1 ? "visible" : "hidden",
           backgroundColor: "pink",
@@ -276,33 +186,6 @@ export default function Dashboard(props) {
         Delete {selectionModel.length} rows
         <DeleteIcon style={{ color: "red" }} />
       </Button>
-        <div id="pages">{
-       
-          returnedUsers.map((pageno, index)=>{
-          if (pages.indexOf(Math.floor(index / props.totalPages) + 1) === -1) {
-            pages.push(Math.floor(index / props.totalPages) + 1);
-
-            return (
-              <Button
-                
-                onClick={() => {
-                  setSelectionModel([]);
-                  setPage(Math.floor(index / props.totalPages));
-                }}
-                size="small"
-                id="page"
-                
-              >
-                {Math.floor(index / props.totalPages) + 1}
-              </Button>
-            );
-          }
-         
-        })}
-      
-   </div>
-   
-    </div>
     </div>
   );
 }
