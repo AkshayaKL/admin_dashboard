@@ -66,7 +66,10 @@ export default function Dashboard() {
       ].sort((a, b) => a["id"] - b["id"])
     );
 
-    setUsers([...returnedUsers]);
+    setUsers( [
+      ...users.filter((user) => user["id"] !== editedRow["id"]),
+      editedRow,
+    ].sort((a, b) => a["id"] - b["id"]));
 
     setopenEdit(false);
   };
